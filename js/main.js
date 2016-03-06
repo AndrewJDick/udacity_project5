@@ -39,7 +39,7 @@ var viewModel = {
 
 		// Tell our views to initialise
 		markerView.init();
-		// mapView.init();
+		mapView.init();
 	},
 	
 
@@ -75,31 +75,61 @@ var markerView = {
         for (i = 0; i < poi.length; i++) {
         	// this is the location we're currently looping over
             var location = poi[i];
-         	console.log(location);
       	
 			// make a new location list item and set its text
         	elem = document.createElement('li');
         	elem.textContent = location.name;
-        	console.log(elem);
 
         	// finally, add the element to the list
         	this.pointOfInterest.appendChild(elem);
-        	console.log(elem);
         }
     }
 };
 
 
-// var mapView = {
+var mapView = {
 
-// };
+	init: function() {
+		// Store the DOM element for later use
+		this.mapElem = document.getElementById('map');
+
+		// render the map view
+		this.render();
+	},
+
+	render: function() {
+
+		var poi, i;
+
+		this.mapOldSt = {
+    		center: new google.maps.LatLng(51.524288,-0.096178),
+    		zoom: 16,
+    		mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+
+		// Generates the map of Old Street
+		this.mapElem = new google.maps.Map(document.getElementById('map'), this.mapOldSt);
+
+		// Retrieves map marker co-ords from the ViewModel
+		var poi = viewModel.getMarkers();
+
+		for (i = 0; i < poi.length; i++) {
+
+			var location = poi[i];
+			this.markerOptions = {
+		    	position: new google.maps.LatLng(location.lat,location.lon)
+			};	
+
+			this.marker = new google.maps.Marker(this.markerOptions);
+			this.marker.setMap(this.mapElem);
+        }
+	}
+};
 
 
 // make it go!
 viewModel.init();
 
-
-// // Generate Old Street Map
 
 // var map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
