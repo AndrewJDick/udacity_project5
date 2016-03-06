@@ -5,27 +5,32 @@ var model = {
         {
             name : 'Cohaesus Projects Ltd',
             lat: '51.524288',
-            lon: '-0.096178', 
+            lng: '-0.096178', 
+            about: 'The office. You work here.'
         },
         {
             name : 'The Fountain',
             lat: '51.526938',
-            lon: '-0.088713', 
+            lng: '-0.088713', 
+            about: 'Local pub. Good beer selection.'
         },
         {
             name : 'Old Street Market',
             lat: '51.523658',
-            lon: '-0.093210', 
+            lng: '-0.093210', 
+            about: 'Great place for lunch.'
         },
         {
             name : 'Finsbury Leisure Centre',
             lat: '51.526212',
-            lon: '-0.095253', 
+            lng: '-0.095253', 
+            about: 'Local gym / fitness centre.'
         },
         {
             name : 'Vibast Community Centre',
             lat: '51.525467',
-            lon: '-0.092290', 
+            lng: '-0.092290', 
+            about: 'Conducts Salah'
         },
     ]
 };
@@ -41,12 +46,12 @@ var viewModel = {
 		markerView.init();
 		mapView.init();
 	},
-	
 
 	// Retrieves the locations object, containing all hard-coded markers
 	getMarkers: function() {
 		return model.locations;
     }
+
 };
 
 
@@ -99,7 +104,10 @@ var mapView = {
 
 	render: function() {
 
-		var poi, i;
+		var render = this;
+
+		// Retrieves map marker co-ords from the ViewModel
+		var poi = viewModel.getMarkers();
 
 		this.mapOldSt = {
     		center: new google.maps.LatLng(51.524288,-0.096178),
@@ -110,47 +118,26 @@ var mapView = {
 		// Generates the map of Old Street
 		this.mapElem = new google.maps.Map(document.getElementById('map'), this.mapOldSt);
 
-		// Retrieves map marker co-ords from the ViewModel
-		var poi = viewModel.getMarkers();
-
-		for (i = 0; i < poi.length; i++) {
-
-			var location = poi[i];
-			this.markerOptions = {
-		    	position: new google.maps.LatLng(location.lat,location.lon)
+		poi.forEach(function(location) {
+			var markerOptions = {
+		     	position: new google.maps.LatLng(location.lat,location.lng)
 			};	
 
-			this.marker = new google.maps.Marker(this.markerOptions);
-			this.marker.setMap(this.mapElem);
-        }
+			var marker = new google.maps.Marker(markerOptions);
+			marker.setMap(render.mapElem);
+
+			google.maps.event.addListener(marker,'click',function(e) {
+				var markerInfoOptions = { content: location.about };
+				var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
+				markerInfo.open(render.mapElem, marker);
+  			});
+		});
 	}
 };
 
 
-// make it go!
+// make it go! Weeeeeeeeeeeeee!
 viewModel.init();
-
-
-// var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
-// // Add Map Markers
-// var marker1Options = {
-//     position: new google.maps.LatLng(51.524288,-0.096178)
-// };
-
-// var marker1 = new google.maps.Marker(marker1Options);
-// marker1.setMap(map);
-
-// var infoWindowOptions = {
-//     content: 'Cohaesus Is Here!'
-// };
-
-// var infoWindow = new google.maps.InfoWindow(infoWindowOptions);
-// google.maps.event.addListener(marker1,'click',function(e){
-  
-//   infoWindow.open(map, marker1);
-  
-// });
 
 
 // // Autocomplete
