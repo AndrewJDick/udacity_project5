@@ -6,31 +6,36 @@ var model = {
             name : 'Cohaesus Projects Ltd',
             lat: '51.524288',
             lng: '-0.096178', 
-            about: 'The office. You work here.'
+            about: 'The office. You work here.',
+            url: 'http://www.cohaesus.co.uk'
         },
         {
             name : 'The Fountain',
             lat: '51.526938',
             lng: '-0.088713', 
-            about: 'Local pub. Good beer selection.'
+            about: 'Local pub. Good beer selection.',
+            url: 'http://www.cohaesus.co.uk'
         },
         {
             name : 'Old Street Market',
             lat: '51.523658',
             lng: '-0.093210', 
-            about: 'Great place for lunch.'
+            about: 'Great place for lunch.',
+            url: 'http://www.cohaesus.co.uk'
         },
         {
             name : 'Finsbury Leisure Centre',
             lat: '51.526212',
             lng: '-0.095253', 
-            about: 'Local gym / fitness centre.'
+            about: 'Local gym / fitness centre.',
+            url: 'http://www.cohaesus.co.uk'
         },
         {
             name : 'Vibast Community Centre',
             lat: '51.525467',
             lng: '-0.092290', 
-            about: 'Conducts Salah'
+            about: 'Conducts Salah',
+            url: 'http://www.cohaesus.co.uk'
         },
     ]
 };
@@ -51,12 +56,13 @@ var viewModel = {
 	getMarkers: function() {
 		return model.locations;
     }
-
 };
 
 
 
 /* ======= View ======= */
+
+
 
 var markerView = {
 
@@ -69,7 +75,7 @@ var markerView = {
     },
 
 	render: function() {
-        var poi, elem, i;
+        var poi, elem, elemA, elemP, i;
         // get the marker locations we'll be rendering from the viewModel
         var poi = viewModel.getMarkers();
 
@@ -83,10 +89,20 @@ var markerView = {
       	
 			// make a new location list item and set its text
         	elem = document.createElement('li');
-        	elem.textContent = location.name;
+        	elemA = document.createElement('a');
+        	elemP = document.createElement('p');
+
+        	// Location header links to their respective URL
+        	elemA.textContent = location.name;
+        	elemA.setAttribute('href', location.url);
+        	
+        	// Provide basic information about the location
+        	elemP.textContent = location.about;
 
         	// finally, add the element to the list
         	this.pointOfInterest.appendChild(elem);
+        	elem.appendChild(elemA);
+        	elem.appendChild(elemP)
         }
     }
 };
@@ -104,6 +120,7 @@ var mapView = {
 
 	render: function() {
 
+		// Store the context of this for our forEach loop
 		var render = this;
 
 		// Retrieves map marker co-ords from the ViewModel
@@ -138,7 +155,6 @@ var mapView = {
 
 // make it go! Weeeeeeeeeeeeee!
 viewModel.init();
-
 
 // // Autocomplete
 // var acOptions = {
