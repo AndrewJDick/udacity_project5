@@ -1,6 +1,8 @@
 /* ======= Model ======= */
 
 var model = {
+	currentMarker: null,
+
 	locations: [
         {
             name : 'Cohaesus Projects Ltd',
@@ -45,6 +47,7 @@ var model = {
 /* ======= ViewModel ======= */
 
 var viewModel = {
+
 	init: function() {
 
 		// Tell our views to initialise
@@ -55,14 +58,18 @@ var viewModel = {
 	// Retrieves the locations object, containing all hard-coded markers
 	getMarkers: function() {
 		return model.locations;
+    },
+
+    setCurrentMarker: function(marker) {
+    	model.currentMarker = marker;
+    },
+
+    getCurrentMarker: function() {
+    	return model.currentMarker;
     }
 };
 
-
-
 /* ======= View ======= */
-
-
 
 var markerView = {
 
@@ -75,37 +82,21 @@ var markerView = {
     },
 
 	render: function() {
-        var poi, elem, elemA, elemP, i;
+        var poi;
+        
         // get the marker locations we'll be rendering from the viewModel
         var poi = viewModel.getMarkers();
+        console.log(poi);
 
-        // empty the marker list
-        this.pointOfInterest.innerHTML = '';
-
-        // loop over the marker locations
-        for (i = 0; i < poi.length; i++) {
-        	// this is the location we're currently looping over
-            var location = poi[i];
-      	
-			// make a new location list item and set its text
-        	elem = document.createElement('li');
-        	elemA = document.createElement('a');
-        	elemP = document.createElement('p');
-
-        	// Location header links to their respective URL
-        	elemA.textContent = location.name;
-        	elemA.setAttribute('href', location.url);
-        	
-        	// Provide basic information about the location
-        	elemP.textContent = location.about;
-
-        	// finally, add the element to the list
-        	this.pointOfInterest.appendChild(elem);
-        	elem.appendChild(elemA);
-        	elem.appendChild(elemP)
+        // Creates a template for each marker location
+        function MyViewModel() {
+    		this.location = poi;
         }
+
+        ko.applyBindings(new MyViewModel());
     }
 };
+
 
 
 var mapView = {
@@ -120,8 +111,10 @@ var mapView = {
 
 	render: function() {
 
+		var marker;
+
 		// Store the context of this for our forEach loop
-		var render = this;
+		var self = this;
 
 		// Retrieves map marker co-ords from the ViewModel
 		var poi = viewModel.getMarkers();
@@ -141,12 +134,12 @@ var mapView = {
 			};	
 
 			var marker = new google.maps.Marker(markerOptions);
-			marker.setMap(render.mapElem);
+			marker.setMap(self.mapElem);
 
 			google.maps.event.addListener(marker,'click',function(e) {
 				var markerInfoOptions = { content: location.about };
 				var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
-				markerInfo.open(render.mapElem, marker);
+				markerInfo.open(self.mapElem, marker);
   			});
 		});
 	}
