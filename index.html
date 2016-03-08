@@ -17,17 +17,13 @@
     <body>
 
         <h2>Neighbourhood Map Project</h2> 
-        <ul id="poi-list" data-bind="template: {name: 'location-template', foreach: location}"></ul>
-        
-        <!-- the dummy text/html attribute is necessary to ensure that the markup is not executed as JavaScript, and Knockout does not attempt to apply bindings to that markup except when it is being used as a template. -->
-        <script type="text/html" id="location-template">
+        <ul id="poi-list" data-bind="foreach:locations">
             <li>
                 <a data-bind="text: name"></a>
                 <p data-bind="text: about"></p>
             </li>
-        </script>            
+        </ul>
 
-        
         <input type="text" id="autocomplete" placeholder="Search for nearby locations" data-bind="text: function (data) { myFunction('param1', data) }">
 
         <div id="map"></div>

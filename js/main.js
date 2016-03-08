@@ -91,9 +91,14 @@ var markerView = {
         // Creates a template for each marker location
         function MyViewModel() {
     		this.location = poi;
+    		console.log(this.location);
         }
 
-        ko.applyBindings(new MyViewModel());
+        var obj = {
+        	locations: ko.observableArray(poi)
+        }	
+
+        ko.applyBindings(obj);
     }
 };
 
@@ -141,7 +146,7 @@ var mapView = {
 				var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
 				markerInfo.open(self.mapElem, marker);
   			});
-		});
+		});	
 	}
 };
 
