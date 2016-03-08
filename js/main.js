@@ -1,7 +1,6 @@
 /* ======= Model ======= */
 
 var model = {
-	currentMarker: null,
 
 	locations: [
         {
@@ -59,15 +58,10 @@ var viewModel = {
 	getMarkers: function() {
 		return model.locations;
     },
-
-    setCurrentMarker: function(marker) {
-    	model.currentMarker = marker;
-    },
-
-    getCurrentMarker: function() {
-    	return model.currentMarker;
-    }
 };
+
+
+
 
 /* ======= View ======= */
 
@@ -86,19 +80,25 @@ var markerView = {
         
         // get the marker locations we'll be rendering from the viewModel
         var poi = viewModel.getMarkers();
-        console.log(poi);
 
-        // Creates a template for each marker location
-        function MyViewModel() {
-    		this.location = poi;
-    		console.log(this.location);
-        }
+        function filter(locations) {
+			var self = this;
 
-        var obj = {
-        	locations: ko.observableArray(poi)
-        }	
+	    	this.items = ko.observableArray(locations);
+	    	// Track the user input of the search box (empty by default)
+	    	this.currentSearch = ko.observable('');
 
-        ko.applyBindings(obj);
+	    	// Since currentSearch is initially blank, the function will return all objects in the model, generating an <li><a><p> for each of them.
+	    	this.filteredItems = ko.computed(function() {
+	      	
+	      		return self.items().filter(function(item) {
+
+	        		return item.name.indexOf(self.currentSearch()) >= 0, item.about.indexOf(self.currentSearch()) >= 0;
+	      		});
+    		});
+    	}
+
+    	ko.applyBindings(new filter(poi));
     }
 };
 
@@ -153,39 +153,6 @@ var mapView = {
 
 // make it go! Weeeeeeeeeeeeee!
 viewModel.init();
-
-// // Autocomplete
-// var acOptions = {
-//   types: ['establishment']
-// };
-
-// var autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'),acOptions);
-// autocomplete.bindTo('bounds',map);
-
-// var infoWindow = new google.maps.InfoWindow();
-
-// var marker = new google.maps.Marker({
-//   map: map
-// });
-
-// google.maps.event.addListener(autocomplete, 'place_changed', function() {
-//   infoWindow.close();
-//   var place = autocomplete.getPlace();
-//   if (place.geometry.viewport) {
-//     map.fitBounds(place.geometry.viewport);
-//   } else {
-//     map.setCenter(place.geometry.location);
-//     map.setZoom(17);
-//   }
-//   marker.setPosition(place.geometry.location);
-//   infoWindow.setContent('<div><strong>' + place.name + '</strong><br>');
-//   infoWindow.open(map, marker);
-//   google.maps.event.addListener(marker,'click',function(e){
-
-//     infoWindow.open(map, marker);
-
-//   });
-// });
 
 
 
