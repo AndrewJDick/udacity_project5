@@ -51,6 +51,17 @@ var viewModel = {
 
     init: function () {
 
+        // Tell our views to initialise
+        markerView.init();
+        mapView.init();
+    },
+
+    // Retrieves the locations object, containing all hard-coded markers
+    getMarkers: function () {
+        return model.locations;
+    },
+
+    filter: function () {
         var self = this;
 
         var locations = model.locations;
@@ -84,19 +95,10 @@ var viewModel = {
                 })
             };
         });
-
-        // Tell our views to initialise
-        markerView.init();
-        mapView.init();
-    },
-
-    // Retrieves the locations object, containing all hard-coded markers
-    getMarkers: function () {
-        return model.locations;
     }
 };
 
-ko.applyBindings(viewModel.init);
+ko.applyBindings(new viewModel.filter());
 
 
 /* ======= View ======= */
@@ -106,9 +108,6 @@ var markerView = {
     init: function () {
         // store the DOM element for easy access later
         this.pointOfInterest = document.getElementById('poi-list');
-
-        // render this view (update the DOM elements with the right values)
-        this.render();
     }
 };
 
