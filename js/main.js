@@ -152,6 +152,7 @@ var mapView = {
                     markerInfo.open(self.mapElem, marker);
                 });
 
+                // Staionary markers bounce when clicked, where bouncing animations will become inert.
                 function toggleBounce() {
                     if (marker.getAnimation() !== null) {
                         marker.setAnimation(null);
