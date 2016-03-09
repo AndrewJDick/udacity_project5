@@ -10,35 +10,30 @@ var model = {
             lat: '51.524288',
             lng: '-0.096178',
             about: 'The office. You work here.',
-            visible: true
         },
         {
             name: 'The Fountain',
             lat: '51.526938',
             lng: '-0.088713',
             about: 'Local pub. Good beer selection.',
-            visible: true
         },
         {
             name: 'Old Street Market',
             lat: '51.523658',
             lng: '-0.093210',
             about: 'Great place for lunch.',
-            visible: true
         },
         {
             name: 'Finsbury Leisure Centre',
             lat: '51.526212',
             lng: '-0.095253',
             about: 'Local gym / fitness centre.',
-            visible: true
         },
         {
             name: 'Vibast Community Centre',
             lat: '51.525467',
             lng: '-0.092290',
             about: 'Conducts Salah',
-            visible: true
         }
     ]
 };
@@ -64,7 +59,7 @@ var viewModel = {
     filter: function () {
         var self = this;
 
-        var locations = model.locations;
+        var locations = viewModel.getMarkers();
 
         // Stores our model objects in an observable array
         this.items = ko.observableArray(locations);
@@ -73,7 +68,6 @@ var viewModel = {
         this.currentSearch = ko.observable('');
 
         function matchesSearch(poi) {
-            // console.log(poi);
             // Return anything that exists in the name or about properties of the list view that matches the search.
             var currentSearch = self.currentSearch();
             return poi.name.indexOf(currentSearch) >= 0 || poi.about.indexOf(currentSearch) >= 0;
@@ -130,6 +124,12 @@ var mapView = {
         // Retrieves map marker co-ords from the ViewModel
         var poi = viewModel.getMarkers();
 
+        // var test = viewModel.searchAndItems.subscribe(function(searchAndItems) {
+        //     console.log(searchAndItems.currentSearch);
+        //     // in here, searchAndItems.currentSearch === currentSearch
+        //      // and searchAndItems.items === items with `visible` set properly
+        // });
+
         this.mapOldSt = {
             center: new google.maps.LatLng(51.524288, -0.096178),
             zoom: 16,
@@ -140,12 +140,6 @@ var mapView = {
         this.mapElem = new google.maps.Map(document.getElementById('map'), this.mapOldSt);
 
         poi.forEach(function (location) {
-
-            // viewModel.searchAndItems.subscribe(function(searchAndItems) {
-            //     console.log(searchAndItems);
-            //     // in here, searchAndItems.currentSearch === currentSearch
-            //      // and searchAndItems.items === items with `visible` set properly
-            // })
 
             var markerOptions = {
                 position: new google.maps.LatLng(location.lat, location.lng)
@@ -165,7 +159,6 @@ var mapView = {
         });
     }
 };
-
 
 // make it go! Weeeeeeeeeeeeee!
 viewModel.init();
