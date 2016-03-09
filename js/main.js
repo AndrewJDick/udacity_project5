@@ -44,22 +44,16 @@ var model = {
 
 var viewModel = {
 
-    init: function () {
-
-        // Tell our views to initialise
-        markerView.init();
-        mapView.init();
-    },
-
     // Retrieves the locations object, containing all hard-coded markers
     getMarkers: function () {
         return model.locations;
     },
 
-    filter: function () {
+    init: function () {
+
         var self = this;
 
-        var locations = viewModel.getMarkers();
+        var locations = this.getMarkers();
 
         // Stores our model objects in an observable array
         this.items = ko.observableArray(locations);
@@ -67,10 +61,12 @@ var viewModel = {
         // Track the user input of the search box (empty by default)
         this.currentSearch = ko.observable('');
 
-        function matchesSearch(poi) {
-            // Return anything that exists in the name or about properties of the list view that matches the search.
-            var currentSearch = self.currentSearch();
-            return poi.name.indexOf(currentSearch) >= 0 || poi.about.indexOf(currentSearch) >= 0;
+        function matchesSearch(poi) {            
+            // Return anything that exists in the name or about properties of the list view that matches the currentSearch.
+            // RegExp uses the currentSearch as the expression for searching, then uses the exec() method to test for a match in our declared string.
+            // the 'i' modifier is used to perform case-insenstive matching
+            var searchRe = RegExp(self.currentSearch(), 'i');
+            return searchRe.exec(poi.name) || searchRe.exec(poi.about)
         }
 
         // Since currentSearch is initially blank, the function will return all objects in the model, generating an <li><a><p> for each of them.
@@ -78,22 +74,12 @@ var viewModel = {
             return self.items().filter(matchesSearch);
         });
 
-        // a combined observable that will trigger its subscribers whenever either the search OR the items are updated
-        this.searchAndItems = ko.computed(function () {
-            return {
-                currentSearch: self.currentSearch(),
-                items: self.items().map(function (poi) {
-                    return Object.assign({}, poi, {
-                        visible: matchesSearch(poi)
-                    });
-                })
-            };
-        });
+        // Tell our views to initialise
+        markerView.init();
+        mapView.init();
+
     }
 };
-
-ko.applyBindings(new viewModel.filter());
-
 
 /* ======= View ======= */
 
@@ -121,15 +107,6 @@ var mapView = {
         // Store the context of this for our forEach loop
         var self = this;
 
-        // Retrieves map marker co-ords from the ViewModel
-        var poi = viewModel.getMarkers();
-
-        // var test = viewModel.searchAndItems.subscribe(function(searchAndItems) {
-        //     console.log(searchAndItems.currentSearch);
-        //     // in here, searchAndItems.currentSearch === currentSearch
-        //      // and searchAndItems.items === items with `visible` set properly
-        // });
-
         this.mapOldSt = {
             center: new google.maps.LatLng(51.524288, -0.096178),
             zoom: 16,
@@ -139,22 +116,37 @@ var mapView = {
         // Generates the map of Old Street
         this.mapElem = new google.maps.Map(document.getElementById('map'), this.mapOldSt);
 
-        poi.forEach(function (location) {
+        var markers = [];
 
-            var markerOptions = {
-                position: new google.maps.LatLng(location.lat, location.lng)
-            };
 
-            var marker = new google.maps.Marker(markerOptions);
-            
-            // Displays the marker if it appears in the search listings.
-            marker.setMap(self.mapElem);
+        // The markers are now subscribed to the filterItems
+        viewModel.filteredItems.subscribe(function(poi) {
+        
+            // remove existing markers
+            markers.forEach(function(marker) {
+            marker.setMap(null);
+            });
+                    
+            // add new ones
+            markers = poi.map(function (location) {
 
-            // Adds an infowindow above the location when the marker is clicked
-            google.maps.event.addListener(marker, 'click', function () {
-                var markerInfoOptions = {content: location.about};
-                var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
-                markerInfo.open(self.mapElem, marker);
+                var markerOptions = {
+                    position: new google.maps.LatLng(location.lat, location.lng)
+                };
+
+                var marker = new google.maps.Marker(markerOptions);
+
+                // Displays the marker if it appears in the search listings.
+                marker.setMap(self.mapElem);
+
+                // Adds an infowindow above the location when the marker is clicked
+                google.maps.event.addListener(marker, 'click', function () {
+                    var markerInfoOptions = {content: location.about};
+                    var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
+                    markerInfo.open(self.mapElem, marker);
+                });
+                
+                return marker;
             });
         });
     }
@@ -162,6 +154,36 @@ var mapView = {
 
 // make it go! Weeeeeeeeeeeeee!
 viewModel.init();
+ko.applyBindings(viewModel);
+
+
+// this.mapOldSt = {
+//             center: new google.maps.LatLng(51.524288, -0.096178),
+//             zoom: 16,
+//             mapTypeId: google.maps.MapTypeId.ROADMAP
+//         };
+
+//         // Generates the map of Old Street
+//         this.mapElem = new google.maps.Map(document.getElementById('map'), this.mapOldSt);
+
+//         poi.forEach(function (location) {
+
+//             var markerOptions = {
+//                 position: new google.maps.LatLng(location.lat, location.lng)
+//             };
+
+//             var marker = new google.maps.Marker(markerOptions);
+            
+//             // Displays the marker if it appears in the search listings.
+//             marker.setMap(self.mapElem);
+
+//             // Adds an infowindow above the location when the marker is clicked
+//             google.maps.event.addListener(marker, 'click', function () {
+//                 var markerInfoOptions = {content: location.about};
+//                 var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
+//                 markerInfo.open(self.mapElem, marker);
+//             });
+//         });
 
 
 
