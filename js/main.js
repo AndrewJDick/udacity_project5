@@ -71,7 +71,6 @@ var viewModel = {
 
         // Since markerView.render is subscribed to the computed observable, it will return all  
         this.filteredItems = ko.computed(function () {
-            self.currentSearch(); // trigger re-evaluation
             return self.items().filter(matchesSearch);
         });
 
@@ -122,12 +121,12 @@ var mapView = {
 
         var markers = [];
 
-
-        // The markers are now subscribed to the filterItems
-        viewModel.filteredItems.subscribe(function(poi) {
+        // The markers are now subscribed to the filterItems computed observable.
+        // Whenever the user makes any changes to currentSearch, the markers will initially be removed, then re-added based on 
+        viewModel.filteredItems.subscribe(function (poi) {
         
             // remove existing markers
-            markers.forEach(function(marker) {
+            markers.forEach(function (marker) {
             marker.setMap(null);
             });
                     
@@ -136,6 +135,7 @@ var mapView = {
             markers = poi.map(function (location) {
 
                 var markerOptions = {
+                    animation: google.maps.Animation.DROP,
                     position: new google.maps.LatLng(location.lat, location.lng)
                 };
 
@@ -146,10 +146,19 @@ var mapView = {
 
                 // Adds an infowindow above the location when the marker is clicked
                 google.maps.event.addListener(marker, 'click', function () {
+                    toggleBounce();
                     var markerInfoOptions = {content: location.about};
                     var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
                     markerInfo.open(self.mapElem, marker);
                 });
+
+                function toggleBounce() {
+                    if (marker.getAnimation() !== null) {
+                        marker.setAnimation(null);
+                    } else {
+                        marker.setAnimation(google.maps.Animation.BOUNCE);
+                    }
+                }
                 
                 return marker;
             });
@@ -160,6 +169,3 @@ var mapView = {
 // make it go! Weeeeeeeeeeeeee!
 viewModel.init();
 ko.applyBindings(viewModel);
-
-
-
