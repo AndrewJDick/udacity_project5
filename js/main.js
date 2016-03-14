@@ -53,32 +53,36 @@ var viewModel = {
 
         var self = this;
 
+        // Retrieve the objects stored in the model and store them in the locations variable.
         var locations = this.getMarkers();
 
-        // Stores our model objects in an observable array
+        // This will store our search results in an observable array via this.filteredItems. 
+        // For now we only initialise the observableArray. We will populate this.items with location data afterwards.
         this.items = ko.observableArray();
 
         // Track the user input of the search box (empty by default)
         this.currentSearch = ko.observable('');
 
+        // Return anything in either locations.name or locations.about that matches the user's currentSearch.
         function matchesSearch(poi) {            
-            // Return anything that exists in the name or about properties of the list view that matches the currentSearch.
-            // RegExp uses the currentSearch as the expression for searching, then uses the exec() method to test for a match in our declared string.
-            // the 'i' modifier is used to perform case-insenstive matching
+            // RegExp uses self.currentSearch as the expression for searching, then uses the exec() method to test for a match in our declared string.
+            // The 'i' modifier is used to perform case-insenstive matching.
             var searchRe = RegExp(self.currentSearch(), 'i');
             return searchRe.exec(poi.name) || searchRe.exec(poi.about)
         }
 
-        // Since markerView.render is subscribed to the computed observable, it will return all  
+        // Whenever a user updates the search bar, the computed function will re-run matchesSearch() to generate any matching locations.
+        // This in turn will generate an <li> & <a> for each location via the forEach data-bind in index.html.  
         this.filteredItems = ko.computed(function () {
             return self.items().filter(matchesSearch);
         });
 
-        this.currentSearch.notifySubscribers();
-
         // Tell our views to initialise
         markerView.init();
         mapView.init();
+
+        // Data is populated afterwards to trigger the filteredItems computed function for the first time.
+        // If we populated where we initialised the array, no markers would appear until the user typed in the search bar (since subscribers of filteredItems would not be notified)
         this.items(locations);
 
     }
@@ -110,28 +114,31 @@ var mapView = {
         // Store the context of this for our forEach loop
         var self = this;
 
+        // Sets the parameters for the map that will display when the user loads the page.
         this.mapOldSt = {
             center: new google.maps.LatLng(51.524288, -0.096178),
             zoom: 16,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
 
-        // Generates the map of Old Street
+        // Generates the map of Old Street using the paramters set previously.
         this.mapElem = new google.maps.Map(document.getElementById('map'), this.mapOldSt);
 
+        // Items stored in this array will display as a marker on the OldSt map.
         var markers = [];
 
-        // The markers are now subscribed to the filterItems computed observable.
-        // Whenever the user makes any changes to currentSearch, the markers will initially be removed, then re-added based on 
+        // The markers are now subscribed to the viewModel.filterItems computed observable.
+        // Whenever the user makes any changes to currentSearch, the previous markers will be cleared and replaced with the new values of viewModel.items. 
+        // 'poi' in this case contains all objects returned when viewModel.filteredItems executes.
         viewModel.filteredItems.subscribe(function (poi) {
         
-            // remove existing markers
+            // Remove existing markers from the OldSt map.
             markers.forEach(function (marker) {
             marker.setMap(null);
             });
                     
-            // add new ones
-            // The map() method creates a new array with the results of calling a provided function on every element in this array.
+            // Add new markers.
+            // The map() method creates a new array with the results of calling a provided function on every element in the poi array.
             markers = poi.map(function (location) {
 
                 var markerOptions = {
