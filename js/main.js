@@ -9,31 +9,31 @@ var model = {
             name: 'Cohaesus Projects Ltd',
             lat: '51.524288',
             lng: '-0.096178',
-            about: 'The office. You work here.',
+            about: 'The office. You work here.'
         },
         {
             name: 'The Fountain',
             lat: '51.526938',
             lng: '-0.088713',
-            about: 'Local pub. Good beer selection.',
+            about: 'Local pub. Good beer selection.'
         },
         {
             name: 'Old Street Market',
             lat: '51.523658',
             lng: '-0.093210',
-            about: 'Great place for lunch.',
+            about: 'Great place for lunch.'
         },
         {
             name: 'Finsbury Leisure Centre',
             lat: '51.526212',
             lng: '-0.095253',
-            about: 'Local gym / fitness centre.',
+            about: 'Local gym / fitness centre.'
         },
         {
             name: 'Vibast Community Centre',
             lat: '51.525467',
             lng: '-0.092290',
-            about: 'Conducts Salah',
+            about: 'Conducts Salah'
         }
     ]
 };
@@ -56,7 +56,7 @@ var viewModel = {
         // Retrieve the objects stored in the model and store them in the locations variable.
         var locations = this.getMarkers();
 
-        // This will store our search results in an observable array via this.filteredItems. 
+        // This will store our search results in an observable array via this.filteredItems.
         // For now we only initialise the observableArray. We will populate this.items with location data afterwards.
         this.items = ko.observableArray();
 
@@ -64,15 +64,15 @@ var viewModel = {
         this.currentSearch = ko.observable('');
 
         // Return anything in either locations.name or locations.about that matches the user's currentSearch.
-        function matchesSearch(poi) {            
+        function matchesSearch(poi) {
             // RegExp uses self.currentSearch as the expression for searching, then uses the exec() method to test for a match in our declared string.
             // The 'i' modifier is used to perform case-insenstive matching.
-            var searchRe = RegExp(self.currentSearch(), 'i');
-            return searchRe.exec(poi.name) || searchRe.exec(poi.about)
+            var searchRe = new RegExp(self.currentSearch(), 'i');
+            return searchRe.exec(poi.name) || searchRe.exec(poi.about);
         }
 
         // Whenever a user updates the search bar, the computed function will re-run matchesSearch() to generate any matching locations.
-        // This in turn will generate an <li> & <a> for each location via the forEach data-bind in index.html.  
+        // This in turn will generate an <li> & <a> for each location via the forEach data-bind in index.html.
         this.filteredItems = ko.computed(function () {
             return self.items().filter(matchesSearch);
         });
@@ -128,15 +128,15 @@ var mapView = {
         var markers = [];
 
         // The markers are now subscribed to the viewModel.filterItems computed observable.
-        // Whenever the user makes any changes to currentSearch, the previous markers will be cleared and replaced with the new values of viewModel.items. 
+        // Whenever the user makes any changes to currentSearch, the previous markers will be cleared and replaced with the new values of viewModel.items.
         // 'poi' in this case contains all objects returned when viewModel.filteredItems executes.
         viewModel.filteredItems.subscribe(function (poi) {
-        
+
             // Remove existing markers from the OldSt map.
             markers.forEach(function (marker) {
-            marker.setMap(null);
+                marker.setMap(null);
             });
-                    
+
             // Add new markers.
             // The map() method creates a new array with the results of calling a provided function on every element in the poi array.
             markers = poi.map(function (location) {
