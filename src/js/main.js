@@ -71,26 +71,6 @@ var viewModel = {
             return searchResults.exec(poi.name) || searchResults.exec(poi.about);
         }
 
-        this.test = function() {
-            alert("working");
-        }
-
-        // Staionary markers bounce when clicked, where bouncing animations will become inert.
-        this.toggleBounce = function() {
-            if (mapView.marker.getAnimation() !== null) {
-                marker.setAnimation(null);
-            } else {
-                mapView.marker.setAnimation(google.maps.Animation.BOUNCE);
-            }
-        }
-
-        // google.maps.event.addListener(this.items, 'click', function () {
-        //     toggleBounce();
-        //     var markerInfoOptions = {content: location.about};
-        //     var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
-        //     markerInfo.open(self.mapElem, marker);
-        // });
-
         // Whenever a user updates the search bar, the computed function will re-run matchesSearch() to generate any matching locations.
         // This in turn will generate an <li> & <a> for each location via the forEach data-bind in index.html.
         this.filteredItems = ko.computed(function () {
@@ -172,15 +152,20 @@ var mapView = {
 
                 // Adds an infowindow above the location when the marker is clicked
                 google.maps.event.addListener(marker, 'click', function () {
-                    
-                    viewModel.test();
-                    viewModel.toggleBounce();
+                    toggleBounce();
                     var markerInfoOptions = {content: location.about};
                     var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
                     markerInfo.open(self.mapElem, marker);
                 });
 
-                
+                // Staionary markers bounce when clicked, where bouncing animations will become inert.
+                function toggleBounce() {
+                    if (marker.getAnimation() !== null) {
+                        marker.setAnimation(null);
+                    } else {
+                        marker.setAnimation(google.maps.Animation.BOUNCE);
+                    }
+                }
 
                 return marker;
             });
