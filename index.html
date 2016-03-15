@@ -14,18 +14,32 @@
         <script src="dist/js/vendor/modernizr-2.8.3.min.js"></script>
     </head>
     <body>
+        <div class="container-fluid wrapper">
+            <header class="row headerContainer">
+                <div class="col-md-12">
+                    <h2>Neighbourhood Map Project</h2>
+                </div>
 
-        <h2>Neighbourhood Map Project</h2> 
-        <ul id="poi-list" data-bind="foreach:filteredItems">
-            <li>
-                <a data-bind="text: name, click: function (data) { myFunction('param1', data) }"></a>
-                <p data-bind="text: about"></p>
-            </li>
-        </ul>
+                <div class="row">  
+                    <div class="col-md-12 searchBar">
+                        <input class="searchBar-textBox" type="text" placeholder="Search for popular locations" data-bind="textinput: currentSearch">
+                    </div>
+                </div>     
+            </header>     
 
-        <input type="text" placeholder="Search for popular locations" id="autocomplete" data-bind="textinput: currentSearch">
+            <div class="row neighbourhoodContainer">  
+                <div class="col-md-3 locationContainer">
+                    <ul id="poi-list" data-bind="foreach:filteredItems">
+                        <li>
+                            <h4 data-bind="text: name"></h4>
+                            <p data-bind="text: about"></p>
+                        </li>
+                    </ul>
+                </div>
 
-        <div id="map"></div>
+                <div id="map" class="col-md-9 mapContainer"></div>    
+            </div>  
+        </div>          
 
         <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
         <script>window.jQuery || document.write('<script src="dist/js/vendor/jquery-1.12.0.min.js"><\/script>')</script>

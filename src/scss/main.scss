@@ -2,6 +2,9 @@
 @import "src/css/main";
 @import "src/css/normalize";
 
+// Bootstrap CSS
+@import "node_modules/bootstrap/dist/css/bootstrap";
+
 
 /*
 * Inverted Triangle CSS (ITCSS), courtesy of Harry Roberts. 
@@ -17,15 +20,22 @@
 
 
 // GENERIC
-
+@import "generic/generic.normalize";
 
 // ELEMENTS
 
 
 // OBJECTS
-
+@import "objects/objects.wrapper";
+@import "objects/objects.headerContainer";
+@import "objects/objects.neighbourhoodContainer";
+@import "objects/objects.locationContainer";
+@import "objects/objects.mapContainer";
 
 // COMPONENTS
+@import "components/components.header";
+@import "components/components.searchBar";
+@import "components/components.locationList";
 
 
 // TRUMPS
