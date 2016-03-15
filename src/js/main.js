@@ -67,9 +67,29 @@ var viewModel = {
         function matchesSearch(poi) {
             // RegExp uses self.currentSearch as the expression for searching, then uses the exec() method to test for a match in our declared string.
             // The 'i' modifier is used to perform case-insenstive matching.
-            var searchRe = new RegExp(self.currentSearch(), 'i');
-            return searchRe.exec(poi.name) || searchRe.exec(poi.about);
+            var searchResults = new RegExp(self.currentSearch(), 'i');
+            return searchResults.exec(poi.name) || searchResults.exec(poi.about);
         }
+
+        this.test = function() {
+            alert("working");
+        }
+
+        // Staionary markers bounce when clicked, where bouncing animations will become inert.
+        this.toggleBounce = function() {
+            if (mapView.marker.getAnimation() !== null) {
+                marker.setAnimation(null);
+            } else {
+                mapView.marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        }
+
+        // google.maps.event.addListener(this.items, 'click', function () {
+        //     toggleBounce();
+        //     var markerInfoOptions = {content: location.about};
+        //     var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
+        //     markerInfo.open(self.mapElem, marker);
+        // });
 
         // Whenever a user updates the search bar, the computed function will re-run matchesSearch() to generate any matching locations.
         // This in turn will generate an <li> & <a> for each location via the forEach data-bind in index.html.
@@ -84,7 +104,6 @@ var viewModel = {
         // Data is populated afterwards to trigger the filteredItems computed function for the first time.
         // If we populated where we initialised the array, no markers would appear until the user typed in the search bar (since subscribers of filteredItems would not be notified)
         this.items(locations);
-
     }
 };
 
@@ -153,21 +172,16 @@ var mapView = {
 
                 // Adds an infowindow above the location when the marker is clicked
                 google.maps.event.addListener(marker, 'click', function () {
-                    toggleBounce();
+                    
+                    viewModel.test();
+                    viewModel.toggleBounce();
                     var markerInfoOptions = {content: location.about};
                     var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
                     markerInfo.open(self.mapElem, marker);
                 });
 
-                // Staionary markers bounce when clicked, where bouncing animations will become inert.
-                function toggleBounce() {
-                    if (marker.getAnimation() !== null) {
-                        marker.setAnimation(null);
-                    } else {
-                        marker.setAnimation(google.maps.Animation.BOUNCE);
-                    }
-                }
                 
+
                 return marker;
             });
         });

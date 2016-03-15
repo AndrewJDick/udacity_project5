@@ -12,14 +12,14 @@
 
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
-        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+        <script src="dist/js/vendor/modernizr-2.8.3.min.js"></script>
     </head>
     <body>
 
         <h2>Neighbourhood Map Project</h2> 
         <ul id="poi-list" data-bind="foreach:filteredItems">
             <li>
-                <a data-bind="text: name"></a>
+                <a data-bind="text: name, click: function (data) { myFunction('param1', data) }"></a>
                 <p data-bind="text: about"></p>
             </li>
         </ul>
@@ -29,10 +29,10 @@
         <div id="map"></div>
 
         <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
-        <script src="js/vendor/knockout-3.4.0.js"></script>
+        <script>window.jQuery || document.write('<script src="dist/js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
+        <script src="dist/js/vendor/knockout-3.4.0.min.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB5UsEOwDGdMQAvhb7EcJuVs1BNR8FWS7E&libraries=places"></script>
-        <script src="js/plugins.js"></script>
-        <script src="js/main.js"></script>
+        <script src="dist/js/plugins.min.js"></script>
+        <script src="dist/js/main.min.js"></script>
     </body>
 </html>
