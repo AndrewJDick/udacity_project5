@@ -153,9 +153,10 @@ var mapView = {
                 // Adds an infowindow above the location when the marker is clicked
                 google.maps.event.addListener(marker, 'click', function () {
                     self.toggleBounce(marker);
-                    var markerInfoOptions = {content: location.about};
-                    var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
-                    markerInfo.open(self.mapElem, marker);
+                    self.infoWindow(location, marker);
+                    // var markerInfoOptions = {content: location.about};
+                    // var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
+                    // markerInfo.open(self.mapElem, marker);
                 });
 
                 return marker;
@@ -168,6 +169,13 @@ var mapView = {
             } else {
                 marker.setAnimation(google.maps.Animation.BOUNCE);
             }
+        };
+
+        this.infoWindow = function(location, marker) {
+            var markerInfoOptions = {content: location.about};
+            var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
+            markerInfo.open(self.mapElem, marker);
+
         };
     }
 };
