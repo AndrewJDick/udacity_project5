@@ -152,24 +152,23 @@ var mapView = {
 
                 // Adds an infowindow above the location when the marker is clicked
                 google.maps.event.addListener(marker, 'click', function () {
-                    toggleBounce();
+                    self.toggleBounce(marker);
                     var markerInfoOptions = {content: location.about};
                     var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
                     markerInfo.open(self.mapElem, marker);
                 });
 
-                // Staionary markers bounce when clicked, where bouncing animations will become inert.
-                function toggleBounce() {
-                    if (marker.getAnimation() !== null) {
-                        marker.setAnimation(null);
-                    } else {
-                        marker.setAnimation(google.maps.Animation.BOUNCE);
-                    }
-                }
-
                 return marker;
             });
         });
+
+        this.toggleBounce = function(marker) {
+            if (marker.getAnimation() !== null) {
+                marker.setAnimation(null);
+            } else {
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        };
     }
 };
 
