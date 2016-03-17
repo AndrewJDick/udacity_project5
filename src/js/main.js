@@ -94,7 +94,11 @@ var markerView = {
     init: function () {
         // store the DOM element for easy access later
         this.pointOfInterest = document.getElementById('poi-list');
-    }
+    },
+
+    render: function () {
+
+    }    
 };
 
 
@@ -138,30 +142,37 @@ var mapView = {
 
             // Add new markers.
             // The map() method creates a new array with the results of calling a provided function on every element in the poi array.
-            markers = poi.map(function (location) {
-
-                var markerOptions = {
-                    animation: google.maps.Animation.DROP,
-                    position: new google.maps.LatLng(location.lat, location.lng)
-                };
-
-                var marker = new google.maps.Marker(markerOptions);
-
-                // Displays the marker if it appears in the search listings.
-                marker.setMap(self.mapElem);
-
-                // Adds an infowindow above the location when the marker is clicked
-                google.maps.event.addListener(marker, 'click', function () {
-                    self.toggleBounce(marker);
-                    self.infoWindow(location, marker);
-                    // var markerInfoOptions = {content: location.about};
-                    // var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
-                    // markerInfo.open(self.mapElem, marker);
-                });
-
-                return marker;
-            });
+            markers = poi.map(self.plotMarkers); 
         });
+
+        this.mapMarkers = function (location) {
+            var markerOptions = {
+                animation: google.maps.Animation.DROP,
+                position: new google.maps.LatLng(location.lat, location.lng)
+            };
+
+            var marker = new google.maps.Marker(markerOptions);
+
+            marker.name = location.name;
+
+            return marker;
+        };
+
+        this.plotMarkers = function(location) {
+            
+            var marker = self.mapMarkers(location);
+
+            // Displays the marker if it appears in the search listings.
+            marker.setMap(self.mapElem);
+
+            // Adds an infowindow above the location when the marker is clicked
+            google.maps.event.addListener(marker, 'click', function () {
+                self.toggleBounce(marker);
+                self.infoWindow(location, marker);
+            });
+
+            return marker;
+        };
 
         this.toggleBounce = function(marker) {
             if (marker.getAnimation() !== null) {
@@ -175,8 +186,26 @@ var mapView = {
             var markerInfoOptions = {content: location.about};
             var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
             markerInfo.open(self.mapElem, marker);
-
         };
+
+        this.listClick = function(location) {
+
+            function findMarker(array, attr, value) {
+                for(var i = 0; i < array.length; i += 1) {
+                    if(array[i][attr] === value) {
+                        return i;
+                    }
+                }
+            }
+
+            // This will loop through the markers array and try to match location.name with the name property of markers elements (set in mapView.mapMarkers).  
+            var locateMapMarker = findMarker(markers, 'name', location.name);
+
+            // Add the infoWindow and bounce animation to the respective map marker when the list <h4> is clicked.
+            var marker = markers[locateMapMarker];
+            self.toggleBounce(marker);
+            self.infoWindow(location, marker);
+        }; 
     }
 };
 
