@@ -210,9 +210,12 @@ var mapView = {
 
         // Creates an infoWindow above the map marker
         this.infoWindow = function(location, marker) {
+            
+            var markerInfo, markerInfoOptions;
+
             $.ajax({
                 type: 'GET',
-                url: 'https://api.foursquare.com/v2/venues/search?ll=51.524288,-0.096178&client_id=WX4CJA0TCWQ3MW0BBZI4XR1QSMOBMUE3ZCUMQJDGQSY4NQSR&client_secret=J3PRLH35JLIHEUITLLKRTY1JWNZIR2LB50ODVXTUFKYRJJEG&v=20160317',
+                url: 'https://api.foursquare.com/v2/venues/search?ll=' + location.lat + ',' + location.lng + '&client_id=WX4CJA0TCWQ3MW0BBZI4XR1QSMOBMUE3ZCUMQJDGQSY4NQSR&client_secret=J3PRLH35JLIHEUITLLKRTY1JWNZIR2LB50ODVXTUFKYRJJEG&v=20160317',
                 data: {
                     format: 'json'
                 },
@@ -220,12 +223,19 @@ var mapView = {
                     alert('An error has occurred. Sorry about that!');
                 },
                 dataType: 'jsonp',
-                success: alert('progress?')  
-            }); 
+                success: function(streetName) {
 
-            var markerInfoOptions = {content: location.about};
-            var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
-            markerInfo.open(self.mapElem, marker);
+                    var infoWindowStyle = '<h3>' + location.name + '</h3>'+
+                                          '<div id="bodyContent">'+
+                                          '<h4>' + streetName.response.venues[0].location.address + '</h4>'+
+                                          '<p>' + location.about + '</p>'
+                                          '</div>';
+
+                    markerInfoOptions = {content: infoWindowStyle};
+                    markerInfo = new google.maps.InfoWindow(markerInfoOptions);
+                    markerInfo.open(self.mapElem, marker);
+                }
+            }); 
         };
     }
 };
