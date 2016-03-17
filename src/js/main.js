@@ -103,7 +103,7 @@ var listView = {
 
         this.listClick = function(location) {
 
-            // Searches for a specified property in an array's elements. 
+            // Searches for a specified property in an array's elements.
             function findMarker(array, attr, value) {
                 for(var i = 0; i < array.length; i += 1) {
                     if(array[i][attr] === value) {
@@ -112,7 +112,7 @@ var listView = {
                 }
             }
 
-            // This will loop through the markers array and try to match location.name with the name property of markers elements (set in mapView.mapMarkers).  
+            // This will loop through the markers array and try to match location.name with the name property of markers elements (set in mapView.mapMarkers).
             var locateMapMarker = findMarker(mapView.markers, 'name', location.name);
 
             // Add the infoWindow and bounce animation to the respective map marker when the list <h4> is clicked.
@@ -120,7 +120,7 @@ var listView = {
             mapView.toggleBounce(marker);
             mapView.infoWindow(location, marker);
         };
-    }    
+    }
 };
 
 
@@ -164,7 +164,7 @@ var mapView = {
 
             // Add new markers.
             // The map() method creates a new array with the results of calling a provided function on every element in the poi array.
-            self.markers = poi.map(self.plotMarkers); 
+            self.markers = poi.map(self.plotMarkers);
         });
 
         // Creates a marker for each item in viewModel.items
@@ -176,7 +176,7 @@ var mapView = {
 
             var marker = new google.maps.Marker(markerOptions);
 
-            // the name property is added so that the list view can calculate which marker to display the infoWindow above. 
+            // the name property is added so that the list view can calculate which marker to display the infoWindow above.
             marker.name = location.name;
 
             return marker;
@@ -184,7 +184,7 @@ var mapView = {
 
         // Plots the generated markers on the Old St map
         this.plotMarkers = function(location) {
-            
+
             var marker = self.mapMarkers(location);
 
             // Displays the marker if it appears in the search listings.
@@ -199,7 +199,7 @@ var mapView = {
             return marker;
         };
 
-        // Makes the selected map marker bounce when it is selected in either the map or list view. 
+        // Makes the selected map marker bounce when it is selected in either the map or list view.
         this.toggleBounce = function(marker) {
             if (marker.getAnimation() !== null) {
                 marker.setAnimation(null);
@@ -210,9 +210,10 @@ var mapView = {
 
         // Creates an infoWindow above the map marker
         this.infoWindow = function(location, marker) {
-            
+
             var markerInfo, markerInfoOptions;
 
+            // Asynchronous request using FourSquare's API to retrieve the address of each location. It is then bound to each marker's infoWindow.
             $.ajax({
                 type: 'GET',
                 url: 'https://api.foursquare.com/v2/venues/search?ll=' + location.lat + ',' + location.lng + '&client_id=WX4CJA0TCWQ3MW0BBZI4XR1QSMOBMUE3ZCUMQJDGQSY4NQSR&client_secret=J3PRLH35JLIHEUITLLKRTY1JWNZIR2LB50ODVXTUFKYRJJEG&v=20160317',
@@ -235,13 +236,18 @@ var mapView = {
                     markerInfo = new google.maps.InfoWindow(markerInfoOptions);
                     markerInfo.open(self.mapElem, marker);
                 }
-            }); 
+            });
         };
     }
 };
 
 // make it go! Weeeeeeeeeeeeee!
-viewModel.init();
-ko.applyBindings(viewModel);
+function initApp() {
+    viewModel.init();
+    ko.applyBindings(viewModel);
+}
 
-
+// Error alert if Google Maps fails to load
+function mapFail() {
+    alert('Google Maps failed to load. Please contact Larry.');
+}
