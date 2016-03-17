@@ -210,6 +210,19 @@ var mapView = {
 
         // Creates an infoWindow above the map marker
         this.infoWindow = function(location, marker) {
+            $.ajax({
+                type: 'GET',
+                url: 'https://api.foursquare.com/v2/venues/search?ll=51.524288,-0.096178&client_id=WX4CJA0TCWQ3MW0BBZI4XR1QSMOBMUE3ZCUMQJDGQSY4NQSR&client_secret=J3PRLH35JLIHEUITLLKRTY1JWNZIR2LB50ODVXTUFKYRJJEG&v=20160317',
+                data: {
+                    format: 'json'
+                },
+                error: function() {
+                    alert('An error has occurred. Sorry about that!');
+                },
+                dataType: 'jsonp',
+                success: alert('progress?')  
+            }); 
+
             var markerInfoOptions = {content: location.about};
             var markerInfo = new google.maps.InfoWindow(markerInfoOptions);
             markerInfo.open(self.mapElem, marker);
@@ -220,3 +233,5 @@ var mapView = {
 // make it go! Weeeeeeeeeeeeee!
 viewModel.init();
 ko.applyBindings(viewModel);
+
+
