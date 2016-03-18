@@ -92,10 +92,8 @@ var viewModel = {
 var listView = {
 
     init: function () {
-        // store the DOM element for easy access later
-        this.pointOfInterest = document.getElementById('poi-list');
 
-        // render the map view
+        // render the list view
         this.render();
     },
 
@@ -127,9 +125,7 @@ var listView = {
 var mapView = {
 
     init: function () {
-        // Store the DOM element for later use
-        this.mapElem = document.getElementById('map');
-
+        
         // render the map view
         this.render();
     },
@@ -157,9 +153,9 @@ var mapView = {
         // 'poi' in this case contains all objects returned when viewModel.filteredItems executes.
         viewModel.filteredItems.subscribe(function (poi) {
 
-            // Remove existing markers from the OldSt map.
+            // Remove all markers from the OldSt map.
             self.markers.forEach(function (marker) {
-                marker.setMap(null);
+               marker.setMap(null);
             });
 
             // Add new markers.
@@ -204,6 +200,9 @@ var mapView = {
             if (marker.getAnimation() !== null) {
                 marker.setAnimation(null);
             } else {
+                self.markers.forEach(function (foo) {
+                    foo.setAnimation(null);
+                });
                 marker.setAnimation(google.maps.Animation.BOUNCE);
             }
         };
@@ -220,6 +219,7 @@ var mapView = {
                 data: {
                     format: 'json'
                 },
+                timeout: 5000, 
                 error: function() {
                     alert('An error has occurred. Sorry about that!');
                 },
@@ -234,6 +234,7 @@ var mapView = {
 
                     markerInfoOptions = {content: infoWindowStyle};
                     markerInfo = new google.maps.InfoWindow(markerInfoOptions);
+
                     markerInfo.open(self.mapElem, marker);
                 }
             });
